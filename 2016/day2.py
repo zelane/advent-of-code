@@ -1,6 +1,6 @@
 lines = []
 
-with open("code.txt") as f:
+with open("day2.txt") as f:
     lines = f.read().split("\n")
 
 keypad = [
