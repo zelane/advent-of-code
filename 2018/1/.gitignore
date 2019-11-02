@@ -6,4 +6,4 @@ main
 *.hi
 *.o
 
-settings.json
+.vscode
