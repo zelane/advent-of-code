@@ -1,7 +1,7 @@
 from collections import deque
 
 with open('src/input.txt') as f:
-    input = [int(line) for line in f.readlines()]
+    input = tuple(int(line) for line in f.readlines())
 
 print(sum(input))
 

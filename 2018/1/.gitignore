@@ -1,9 +1,0 @@
-/target
-**/*.rs.bk
-
-main
-
-*.hi
-*.o
-
-.vscode
