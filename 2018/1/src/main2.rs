@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
                 int = -1 * int;
             }
             freq += int;
-
+            
             if frequencies.contains(&freq) {
                 println!("{}", freq);
                 run = false;

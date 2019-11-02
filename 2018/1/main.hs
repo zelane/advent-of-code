@@ -3,17 +3,25 @@ import qualified Data.Text.IO as Text
 import Data.List
 
 convert :: Text.Text -> Integer
-convert x = sign (fst (split x)) (snd (split x)) 
+convert x = sign (Text.unpack x)
 
-split :: Text.Text -> ([Char], [Char])
-split x = splitAt 1 (Text.unpack x)
+sign :: String -> Integer
+sign ('+':xs) = read xs :: Integer
+sign ('-':xs) = -1 * (read xs :: Integer)
 
-sign :: [Char] -> [Char] -> Integer
-sign "+" x = read x :: Integer
-sign "-" x = -1 * (read x :: Integer)
+sum_check :: Integer -> [Integer] -> [Integer] -> Integer
+sum_check x prev_values vecs = if (elem x prev_values)
+    then x
+    else sum_check (x + (head vecs)) (prev_values ++ [x]) (rotateList vecs)
+
+rotateList :: [a] -> [a]
+rotateList x = tail x ++ [head x]
 
 main = do
     lines <- fmap Text.lines (Text.readFile "src/input.txt")
 
-    let total = sum (map convert lines)
-    putStrLn (show (total))
+    let converted = map convert lines
+    putStrLn (show (sum converted))
+
+    -- let total = sum_check 0 [] converted
+    -- putStrLn (show total)
