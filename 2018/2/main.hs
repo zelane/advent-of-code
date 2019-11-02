@@ -1,9 +1,6 @@
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
-import qualified Data.IntSet  as IntSet
-import Data.Tuple.Extra
 import Data.List
--- import Data.Map
 
 
 hasLetterCount :: Int -> String -> Bool
