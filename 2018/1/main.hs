@@ -1,18 +1,19 @@
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
+import qualified Data.IntSet  as IntSet
 import Data.List
 
-convert :: Text.Text -> Integer
+convert :: Text.Text -> Int
 convert x = sign (Text.unpack x)
 
-sign :: String -> Integer
-sign ('+':xs) = read xs :: Integer
-sign ('-':xs) = -1 * (read xs :: Integer)
+sign :: String -> Int
+sign ('+':xs) = read xs :: Int
+sign ('-':xs) = -1 * (read xs :: Int)
 
-sum_check :: Integer -> [Integer] -> [Integer] -> Integer
-sum_check x prev_values vecs = if (elem x prev_values)
+sum_check :: Int -> IntSet.IntSet -> [Int] -> Int
+sum_check x prev_values vecs = if (IntSet.member x prev_values)
     then x
-    else sum_check (x + (head vecs)) (prev_values ++ [x]) (rotateList vecs)
+    else sum_check (x + (head vecs)) (IntSet.insert x prev_values) (rotateList vecs)
 
 rotateList :: [a] -> [a]
 rotateList x = tail x ++ [head x]
@@ -23,5 +24,5 @@ main = do
     let converted = map convert lines
     putStrLn (show (sum converted))
 
-    -- let total = sum_check 0 [] converted
-    -- putStrLn (show total)
+    let total = sum_check 0 IntSet.empty converted
+    putStrLn (show total)
