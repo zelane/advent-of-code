@@ -1,9 +1,9 @@
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
+import qualified Data.Set     as Set
 import Data.List
 import Data.List.Split (splitOn)
-import Data.Map.Strict (Map, fromList)
-import qualified Data.Set     as Set
+import Data.Maybe      (fromJust)
 
 plotCoords :: (Int, Int) -> (Int, Int) -> [(Int, Int)]
 plotCoords (offsetX, offsetY) (areaX, areaY) = [(x, y) | x <-rangeX, y <-rangeY]
@@ -21,10 +21,10 @@ plotClaim x = plotCoords offset area
         area   = toIntPair (splitOn "x" (last split))
         split  = splitOn ":" x
 
-convertClaim :: String -> (String, [(Int, Int)])
+convertClaim :: Text.Text -> (String, [(Int, Int)])
 convertClaim x = (head y, plotClaim $ last y)
     where
-        y = splitOn "@" x
+        y = splitOn "@" (Text.unpack x)
 
 lengthGt :: Int -> [a] -> Bool
 lengthGt l x = length x > l
@@ -32,14 +32,12 @@ lengthGt l x = length x > l
 dupeSet :: [(Int, Int)] -> Set.Set (Int, Int)
 dupeSet coords = Set.fromList $ concat $ filter (lengthGt 1) (group $ sort $ coords)
 
-checkFree :: (String, [(Int, Int)]) -> Set.Set (Int, Int) -> Maybe String
-checkFree (id, coords) dupes = if Set.disjoint (Set.fromList coords) dupes then Just id else Nothing
+checkFree :: Set.Set (Int, Int) -> (String, [(Int, Int)]) -> Bool
+checkFree dupes (id, coords) = if Set.disjoint (Set.fromList coords) dupes then True else False
 
 main = do
     file_lines <- fmap Text.lines (Text.readFile "input.txt")
-    let lines = map Text.unpack file_lines
-    let claims = map convertClaim lines
+    let claims = map convertClaim file_lines
     let dupes = dupeSet (concat (map snd claims))
     putStrLn $ show $ length $ dupes
-
-    putStrLn $ show $ checkFree (head claims) dupes
+    putStrLn $ show $ fst $ fromJust $ find (checkFree dupes) claims
