@@ -14,3 +14,13 @@ for code in input:
         threes += 1
     
 print(twos * threes)
+
+for codea in input:
+    for codeb in input:
+        matches = [
+            letter for i, letter in enumerate(codea)
+            if letter == codeb[i]
+        ]
+        if len(matches) == 26:
+            print("".join(matches))
+            exit(0)

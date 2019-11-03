@@ -1,6 +1,7 @@
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 import Data.List
+import Data.Maybe (catMaybes)
 
 
 hasLetterCount :: Int -> String -> Bool
@@ -29,5 +30,5 @@ main = do
     let answer_1 = (matchCodes lines 2) * (matchCodes lines 3)
     putStrLn $ show $ answer_1
 
-    let answer_2 = map (findMatch lines) lines
+    let answer_2 = head $ catMaybes $ map (findMatch lines) lines
     putStrLn $ show $ answer_2
