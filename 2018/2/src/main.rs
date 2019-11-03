@@ -8,7 +8,7 @@ fn main() -> std::io::Result<()> {
 }
 
 fn part_1() {
-    let file = File::open("src/input.txt").unwrap();
+    let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
 
     let mut twos = 0;
@@ -44,14 +44,13 @@ fn part_1() {
 
 fn part_2() {
     
-    let file = File::open("src/input.txt").unwrap();
+    let file = File::open("input.txt").unwrap();
     let reader = BufReader::new(file);
     
     let lines: Vec<String> = reader.lines().filter_map(Result::ok).collect();
     
     for line in lines.iter() {
         for line2 in lines.iter() {
-            // println!("Comparing {} to {}", line, line2);
             let mut diff = 0;
             let mut result =  String::with_capacity(line.len());
             for (i, c) in line.chars().enumerate() {
@@ -62,7 +61,6 @@ fn part_2() {
                     result.push(c);
                 }
             }
-            // println!("{}", diff);
             if diff == 1 {
                 println!("{} {}", line, line2);
                 println!("{}", result);
