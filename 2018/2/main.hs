@@ -1,5 +1,3 @@
-import qualified Data.Text    as Text
-import qualified Data.Text.IO as Text
 import Data.List
 import Data.Maybe (catMaybes)
 
@@ -24,8 +22,7 @@ findMatch (l:ls) x = if length common == 25 then Just common else findMatch ls x
         common = commonLetters x l []
 
 main = do
-    file_lines <- fmap Text.lines (Text.readFile "input.txt")
-    let lines = map Text.unpack file_lines
+    lines <- fmap lines (readFile "input.txt")
 
     let answer_1 = (matchCodes lines 2) * (matchCodes lines 3)
     putStrLn $ show $ answer_1

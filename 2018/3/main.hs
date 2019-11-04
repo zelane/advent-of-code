@@ -1,5 +1,3 @@
-import qualified Data.Text    as Text
-import qualified Data.Text.IO as Text
 import qualified Data.Set     as Set
 import Data.List
 import Data.List.Split (splitOn)
@@ -21,10 +19,10 @@ plotClaim x = plotCoords offset area
         area   = toIntPair (splitOn "x" (last split))
         split  = splitOn ":" x
 
-convertClaim :: Text.Text -> (String, [(Int, Int)])
+convertClaim :: String -> (String, [(Int, Int)])
 convertClaim x = (head y, plotClaim $ last y)
     where
-        y = splitOn "@" (Text.unpack x)
+        y = splitOn "@" x
 
 lengthGt :: Int -> [a] -> Bool
 lengthGt l x = length x > l
@@ -36,7 +34,7 @@ checkFree :: Set.Set (Int, Int) -> (String, [(Int, Int)]) -> Bool
 checkFree dupes (id, coords) = if Set.disjoint (Set.fromList coords) dupes then True else False
 
 main = do
-    file_lines <- fmap Text.lines (Text.readFile "input.txt")
+    file_lines <- fmap lines (readFile "input.txt")
     let claims = map convertClaim file_lines
     let dupes = dupeSet (concat (map snd claims))
     putStrLn $ show $ length $ dupes

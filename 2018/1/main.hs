@@ -1,10 +1,5 @@
-import qualified Data.Text    as Text
-import qualified Data.Text.IO as Text
 import qualified Data.IntSet  as IntSet
 import Data.List
-
-convert :: Text.Text -> Int
-convert x = sign (Text.unpack x)
 
 sign :: String -> Int
 sign ('+':xs) = read xs :: Int
@@ -19,9 +14,9 @@ rotateList :: [a] -> [a]
 rotateList x = tail x ++ [head x]
 
 main = do
-    lines <- fmap Text.lines (Text.readFile "src/input.txt")
+    lines <- fmap lines (readFile "src/input.txt")
 
-    let converted = map convert lines
+    let converted = map sign lines
     putStrLn (show (sum converted))
 
     let total = sum_check 0 IntSet.empty converted
