@@ -27,8 +27,8 @@ mapSleep events = (id, accumNaps naps)
         id   = read (tail $ last $ take 4 $ splitOn " " (head events)) :: Int
         naps = chunksOf 2 $ tail events
 
-foldShifts :: (Int, [(Int, Int)]) -> (String, [(Int, Int)]) -> (Int, [(Int, Int)])
-foldShifts (idA, napsA) (idB, napsB) = if idA == idB then (idA, (concat napsA napsB)) else (idB, napsB)
+foldShifts :: (Int, [(Int, Int)]) -> (Int, [(Int, Int)]) -> (Int, [(Int, Int)])
+foldShifts (idA, napsA) (idB, napsB) = if idA == idB then (idA, (concat [napsA, napsB])) else (idB, napsB)
 
 main = do
     file_lines <- fmap Text.lines (Text.readFile "input.txt")
