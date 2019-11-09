@@ -22,29 +22,26 @@ infinite_coords = set([
     min(coordinates, key=lambda x: calc_distance(x, (max_x, max_y))),
 ])
 
-closet_count = {
-    c: [c] for c in coordinates
-}
+closet_count = {c: [] for c in coordinates}
+answer_2 = 0
+for square in [(x, y) for x in range(min_x, max_x) for y in range(min_y, max_y)]:
+    _sum = 0
+    distances = {}
+    for coord in coordinates:
+        distance = calc_distance(square, coord)
+        distances.setdefault(distance, set()).add(coord)
+        _sum += distance
 
-for y in range(min_y, max_y+1):
-    for x in range(min_x, max_x+1):
-        square = (x, y)
-        if square in coordinates:
-            continue
+    if _sum < 10000:
+        answer_2 += 1
 
-        distances = {}
-        for coord in coordinates:
-            distance = calc_distance(square, coord)
-            distances.setdefault(distance, set()).add(coord)
-
-        shortest_distance = min(distances.keys())
-        closest_coords = distances[shortest_distance]
-
-        if len(closest_coords) == 1:
-            closet_count[closest_coords.pop()].append(square)
+    closest_coords = distances[min(distances.keys())]
+    if len(closest_coords) == 1:
+        closet_count[closest_coords.pop()].append(square)
 
 answer_1 = max(
     len(points) for coord, points in closet_count.items()
     if coord not in infinite_coords
 )
 print(answer_1)
+print(answer_2)
