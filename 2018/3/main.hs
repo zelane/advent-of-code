@@ -24,11 +24,8 @@ convertClaim x = (head y, plotClaim $ last y)
     where
         y = splitOn "@" x
 
-lengthGt :: Int -> [a] -> Bool
-lengthGt l x = length x > l
-
 dupeSet :: [(Int, Int)] -> Set.Set (Int, Int)
-dupeSet coords = Set.fromList $ concat $ filter (lengthGt 1) (group $ sort $ coords)
+dupeSet coords = Set.fromList $ concat $ filter ((>1) . length) (group $ sort $ coords)
 
 checkFree :: Set.Set (Int, Int) -> (String, [(Int, Int)]) -> Bool
 checkFree dupes (id, coords) = if Set.disjoint (Set.fromList coords) dupes then True else False
