@@ -1,12 +1,13 @@
 import heapq
 
 class Unit:
-    def __init__(self, team, y, x):
+    def __init__(self, team, y, x, atk=3):
         self.team = team
         self.enemy = "G" if team == "E" else "E"
         self.y = y
         self.x = x
         self.health = 200
+        self.atk = atk
     
     @property
     def pos(self):
@@ -18,15 +19,25 @@ class Unit:
 
     def attack(self, enemies:["Unit"]):
         target = sorted(enemies, key=lambda e: (e.health, e.pos))[0]
-        target.health -= 3
+        target.health -= self.atk
 
 
 class Board:
-    def __init__(self):
+    def __init__(self, lines, elf_atk=3):
+        self.round = 0
         self.walls = set()
         self.units:[Unit] = []
+        for y, line in enumerate(lines):
+            for x, cell in enumerate(line):
+                if cell == "#":
+                    self.walls.add((y, x))
+                elif cell == "G":
+                    self.units.append(Unit(cell, y, x))
+                elif cell == "E":
+                    self.units.append(Unit(cell, y, x, elf_atk))
 
     def end_round(self):
+        self.round += 1
         self.units = [u for u in self.units if u.alive]
         self.units = sorted(self.units, key=lambda u: u.pos)
         return all(u.team == self.units[0].team for u in self.units)
@@ -82,43 +93,42 @@ class Board:
     def choose_move(self, unit:Unit):
         blocked = self.walls | {x.pos for x in self.units if unit is not x and x.alive}
         in_range = self.find_in_range(unit, blocked)
-        if not in_range:
-            return None
 
-        routes = self.shortest_routes(unit, in_range, blocked)
-        if routes and routes[0]:
-            return routes[0][0]
+        if in_range:
+            routes = self.shortest_routes(unit, in_range, blocked)
+            if routes and routes[0]:
+                return routes[0][0]
+    
+    def play_round(self):
+        for unit in self.units:
+            if not unit.alive:
+                continue
 
+            adj_enemies = self.adjacent_enemies(unit)
+            if not adj_enemies:
+                move = self.choose_move(unit)
+                if not move:
+                    continue
+                unit.y, unit.x = move[0], move[1]
+            
+            adj_enemies = self.adjacent_enemies(unit)
+            if adj_enemies:
+                unit.attack(adj_enemies)
+
+        return self.end_round()
 
 with open("input.txt") as f:
-    board = Board()
-    for y, line in enumerate(f.readlines()):
-        for x, cell in enumerate(line):
-            if cell == "#":
-                board.walls.add((y, x))
-            elif cell in ("G", "E"):
-                board.units.append(Unit(cell, y, x))
+    lines = f.readlines()
 
-_round = 0
+atk = 3
 while True:
-    for unit in board.units:
-        if not unit.alive:
-            continue
-
-        adj_enemies = board.adjacent_enemies(unit)
-        if not adj_enemies:
-            move = board.choose_move(unit)
-            if not move:
-                continue
-            unit.y, unit.x = move[0], move[1]
-        
-        adj_enemies = board.adjacent_enemies(unit)
-        if adj_enemies:
-            unit.attack(adj_enemies)
-
-    victory = board.end_round()
-    if victory:
-        print("Victory for the {} after {} rounds. {}hp remaining.".format(board.units[0].team, _round, sum(u.health for u in board.units)))
-        print(_round * sum(u.health for u in board.units))
+    board = Board(lines, elf_atk=atk)
+    starting_elves = len([u for u in board.units if u.team == 'E'])
+    while not board.play_round(): 
+        pass
+    if atk == 3:
+        print((board.round - 1) * sum(u.health for u in board.units))
+    if starting_elves == len([u for u in board.units if u.team == 'E']):
+        print((board.round - 1) * sum(u.health for u in board.units))
         break
-    _round += 1
+    atk += 1
