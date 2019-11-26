@@ -1,17 +1,20 @@
-from collections import defaultdict
 import heapq
 
 class Unit:
     def __init__(self, team, y, x):
         self.team = team
         self.enemy = "G" if team == "E" else "E"
-        self.x = x
         self.y = y
+        self.x = x
         self.health = 200
     
     @property
     def pos(self):
         return (self.y, self.x)
+
+    @property
+    def alive(self):
+        return self.health > 0
 
     def attack(self, enemies:["Unit"]):
         target = sorted(enemies, key=lambda e: (e.health, e.pos))[0]
@@ -22,32 +25,16 @@ class Board:
     def __init__(self):
         self.walls = set()
         self.units:[Unit] = []
-        self.height = 0
-        self.width = 0
-
-    def render(self, extra=None):
-        for y in range(board.height):
-            for x in range(board.width):
-                p = "."
-                if (y, x) in self.walls:
-                    p = "#"
-                else:
-                    for u in self.units:
-                        if u.health > 0 and u.pos == (y, x):
-                            p = u.team
-                print(p, end="")
-            print("")
-        print(", ".join("%s(%s)" % (u.team, u.health) for u in self.units if u.health > 0))
 
     def end_round(self):
-        self.units = [u for u in self.units if u.health > 0]
+        self.units = [u for u in self.units if u.alive]
         self.units = sorted(self.units, key=lambda u: u.pos)
         return all(u.team == self.units[0].team for u in self.units)
 
-    def shortest_routes(self, u:Unit, targets):
-        visited = self.walls | {x.pos for x in self.units if u != x and x.health > 0}
+    def shortest_routes(self, unit:Unit, targets, blocked):
+        visited = blocked
         routes = []
-        queue = [(0, [u.pos])]
+        queue = [(0, [unit.pos])]
         while queue:
             distance, route = heapq.heappop(queue)
             current_cell = route[-1]
@@ -76,34 +63,29 @@ class Board:
         return {cell for cell in ((y, x-1), (y, x+1), (y-1, x), (y+1, x))}
 
     def adjacent_enemies(self, unit:Unit):
-        enemies = []
-        adjacent_cells = board.adjacent(*unit.pos)
-        for u in board.units:
-            if u.health < 1 or u.team == unit.team:
-                continue
+        adjacent_cells = self.adjacent(*unit.pos)
+        return {
+            u for u in self.units
+            if u.alive and u.team != unit.team and u.pos in adjacent_cells
+        }
 
-            if u.pos in adjacent_cells:
-                enemies.append(u)
-
-        return enemies
-
-    def find_in_range(self, u:Unit):
+    def find_in_range(self, unit:Unit, blocked):
         in_range = set()
-        for unit in self.units:
-            if unit.health < 1 or unit is u or unit.team == u.team:
+        for u in self.units:
+            if u is unit or not u.alive or u.team == unit.team:
                 continue
-            in_range = in_range.union(self.adjacent(unit.y, unit.x))
+            in_range = in_range.union(self.adjacent(u.y, u.x))
 
-        occupied = self.walls | {x.pos for x in self.units if u is not x and x.health > 0}
-        in_range = in_range.difference(occupied)
+        in_range = in_range.difference(blocked)
         return in_range
 
-    def choose_move(self, u:Unit):
-        in_range = self.find_in_range(unit)
+    def choose_move(self, unit:Unit):
+        blocked = self.walls | {x.pos for x in self.units if unit is not x and x.alive}
+        in_range = self.find_in_range(unit, blocked)
         if not in_range:
             return None
 
-        routes = self.shortest_routes(u, in_range)
+        routes = self.shortest_routes(unit, in_range, blocked)
         if routes and routes[0]:
             return routes[0][0]
 
@@ -116,12 +98,11 @@ with open("input.txt") as f:
                 board.walls.add((y, x))
             elif cell in ("G", "E"):
                 board.units.append(Unit(cell, y, x))
-        board.width = x
-    board.height = y + 1
 
-for x in range(0, 300):
+_round = 0
+while True:
     for unit in board.units:
-        if unit.health < 1:
+        if not unit.alive:
             continue
 
         adj_enemies = board.adjacent_enemies(unit)
@@ -137,6 +118,7 @@ for x in range(0, 300):
 
     victory = board.end_round()
     if victory:
-        print("Victory for the {} after {} rounds. {}hp remaining.".format(board.units[0].team, x, sum(u.health for u in board.units)))
-        print(x * sum(u.health for u in board.units))
+        print("Victory for the {} after {} rounds. {}hp remaining.".format(board.units[0].team, _round, sum(u.health for u in board.units)))
+        print(_round * sum(u.health for u in board.units))
         break
+    _round += 1
