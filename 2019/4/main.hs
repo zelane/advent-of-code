@@ -1,5 +1,5 @@
 import Data.Digits (digits)
-import Data.List (group, sort)
+import Data.List (group)
 
 checkInc :: [Int] -> Bool
 checkInc [] = True
