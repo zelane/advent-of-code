@@ -1,4 +1,6 @@
 from collections import defaultdict
+from operator import itemgetter
+from copy import copy
 
 with open("input.txt") as f:
     prog = [int(x) for x in f.read().split(",")]
@@ -103,8 +105,59 @@ class Cpu:
         return outputs
 
 
-comp = Cpu(prog, [1])
-print(comp.run()[0])
+directions = {
+    'N': ['W', 'E'],
+    'E': ['N', 'S'],
+    'S': ['E', 'W'],
+    'W': ['S', 'N']
+}
 
-comp = Cpu(prog, [2])
-print(comp.run()[0])
+moves = {'N': (0, 1), 'E': (1, 0), 'S': (0, -1), 'W': (-1, 0)}
+
+
+class Robot:
+    def __init__(self, prog):
+        self.pos = (0, 0)
+        self.dir = 'N'
+        self.cpu = Cpu(prog)
+
+    def move(self, _dir: int):
+        self.dir = directions[self.dir][_dir]
+        move = moves[self.dir]
+        self.pos = (self.pos[0] + move[0], self.pos[1] + move[1])
+
+
+hull = defaultdict(int)
+robot = Robot(copy(prog))
+
+while not robot.cpu.halted:
+    panel = hull[robot.pos]
+    colour, dire = robot.cpu.run(inputs=[panel])
+    hull[robot.pos] = colour
+    robot.move(dire)
+print(len(hull.keys()))
+
+hull = defaultdict(int)
+robot = Robot(copy(prog))
+first = True
+while not robot.cpu.halted:
+    panel = hull[robot.pos]
+    if first:
+        panel = 1
+        first = False
+
+    outputs = robot.cpu.run(inputs=[panel])
+    hull[robot.pos] = outputs[0]
+    robot.move(outputs[1])
+
+minx, maxx = min(hull, key=itemgetter(0))[0], max(hull, key=itemgetter(0))[0]
+miny, maxy = min(hull, key=itemgetter(1))[1], max(hull, key=itemgetter(1))[1]
+
+for y in reversed(range(miny, maxy + 1)):
+    for x in range(minx, maxx):
+        panel = hull.get((x, y))
+        render = " "
+        if panel is not None:
+            render = "#" if int(panel) == 1 else " "
+        print(render, end="")
+    print("")
