@@ -1,9 +1,6 @@
 import Data.List.Split
 import Data.List
 import Data.Function
-import Control.Parallel.Strategies
-
-
 
 
 img :: Char -> Char
@@ -20,7 +17,7 @@ paint layers = unlines $ chunksOf 25 pixels
 
 main = do
     pixels <- readFile "input.txt"
-    let layers = parMap rpar concat $ chunksOf 6 $ chunksOf 25 pixels
+    let layers = parmap concat $ chunksOf 6 $ chunksOf 25 pixels
     let answer1 = minimumBy (compare `on` (length.head)) $ map (group.sort) layers
     print $ product.tail $ map length answer1
     putStr $ paint layers
