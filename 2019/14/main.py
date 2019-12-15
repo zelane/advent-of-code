@@ -42,3 +42,10 @@ from collections import defaultdict
 
 fuel_r = reactions['FUEL']['ing']
 print(ore_count('FUEL', reactions, defaultdict(int)))
+
+ore = 1_000_000_000_000
+while ore > 0:
+    rem = defaultdict(int)
+    o = ore_count('FUEL', reactions, rem)
+    print(o, rem)
+    break
