@@ -48,14 +48,19 @@ answer_1 = ore_count('FUEL', reactions, rem)
 print(answer_1)
 
 ore = 1_000_000_000_000
-fuel = 0
-rem = {k: 0 for k in reactions.keys()}
-while True:
-    o = ore_count('FUEL', reactions, rem)
-    if o > ore:
-        break
-    ore -= o
-    print(fuel, ore, end='\r')
-    fuel += 1
+rem_ore = ore % answer_1
+fuel = (ore - rem_ore) / answer_1
+
+print(rem_ore, fuel)
+rem = {k: v * fuel for k in reactions.keys()}
+
+# fuel = 0
+# while True:
+#     o = ore_count('FUEL', reactions, rem)
+#     if o > ore:
+#         break
+#     ore -= o
+#     print(fuel, ore, end='\r')
+#     fuel += 1
 
 print(fuel, ore)
