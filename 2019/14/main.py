@@ -2,7 +2,7 @@ import re
 import functools
 
 reactions = {}
-with open("test.txt") as f:
+with open("input.txt") as f:
     for line in f.readlines():
         r = re.findall(r"[0-9]+ [a-zA-Z+]+", line)
         base_c, base_fid =  r.pop().split(" ")
@@ -39,8 +39,6 @@ def ore_count(fid, reactions, rem):
 
     return ore
 
-from collections import defaultdict
-from copy import deepcopy
 
 rem = {k: 0 for k in reactions.keys()}
 fuel_r = reactions['FUEL']['ing']
@@ -48,19 +46,14 @@ answer_1 = ore_count('FUEL', reactions, rem)
 print(answer_1)
 
 ore = 1_000_000_000_000
-rem_ore = ore % answer_1
-fuel = (ore - rem_ore) / answer_1
+fuel = 0
+rem = {k: 0 for k in reactions.keys()}
+while True:
+    o = ore_count('FUEL', reactions, rem)
 
-print(rem_ore, fuel)
-rem = {k: v * fuel for k in reactions.keys()}
-
-# fuel = 0
-# while True:
-#     o = ore_count('FUEL', reactions, rem)
-#     if o > ore:
-#         break
-#     ore -= o
-#     print(fuel, ore, end='\r')
-#     fuel += 1
+    if o > ore:
+        break
+    ore -= o
+    fuel += 1
 
 print(fuel, ore)
