@@ -1,4 +1,7 @@
-import Data.List (sort)
+import qualified Data.IntMap.Strict as M
+import Data.List (elem, head, maximum, sort)
+import Data.Maybe (fromJust, isJust)
+import Debug.Trace (traceShow)
 
 answer1 :: [Int] -> (Int, Int) -> Int
 answer1 [_] (a, b) = a * b
@@ -18,8 +21,10 @@ answer2 points point
 
 main :: IO ()
 main = do
-  lines <- fmap lines (readFile "input.txt")
+  lines <- fmap lines (readFile "test.txt")
   let numbers = sort $ map read lines :: [Int]
   let chargers = [0] ++ numbers ++ [maximum numbers + 3]
   print $ answer1 chargers (0, 0)
   print $ answer2 chargers (maximum chargers)
+
+-- traverse up the tree, if there are splits, multiply the number of splits

@@ -20,8 +20,7 @@ parse (a, b) = (a, read b) :: (Int, Int)
 
 main :: IO ()
 main = do
-  lines <- fmap lines (readFile "input.txt")
-  let [time, _buses] = lines
+  [time, _buses] <- fmap lines (readFile "input.txt")
   let arrival = read time :: Int
   let buses = map read $ filter (/= "x") $ splitOn "," _buses :: [Int]
   let (a1, b1) = minimumBy (comparing snd) $ zip buses $ map (findClosest arrival) buses
