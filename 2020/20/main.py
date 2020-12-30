@@ -198,22 +198,8 @@ reg = (
 
 
 def scan(image):
-    f = 0
-    e = 0
-    found = 0
     text = "".join(image)
-    # x = re.findall(reg, text, overlapped=True)
-    # print("aa", len(x))
-    for i, line in enumerate(image):
-
-        for match in re.findall("#....##....##....###", line, overlapped=True):
-            start = line.index(match)
-            end = start + len(match)
-            e += 1
-            if re.match("..................#.", image[i - 1][start:end]):
-                f += 1
-                if re.match(".#..#..#..#..#..#...", image[i + 1][start:end]):
-                    found += 1
+    found = len(re.findall(reg, text, overlapped=True))
     return found
 
 
