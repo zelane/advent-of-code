@@ -24,7 +24,7 @@ def find_edges(tile):
     r = "".join([x[-1] for x in tile])
     b = tile[-1]
     l = "".join([x[0] for x in tile])
-    return t, r, b, l
+    return [t, r, b, l] + [s[::-1] for s in [t, r, b, l]]
 
 
 def flip_v(tile):
@@ -35,7 +35,7 @@ def flip_h(tile):
     return [t[::-1] for t in tile]
 
 
-def rotate_r(tile):
+def rotate(tile):
     tile = copy(tile)
     last = tile.pop()
     rotated = [c for c in last]
@@ -48,17 +48,12 @@ def rotate_r(tile):
 
 for tid, tile in tiles.items():
     edges = find_edges(tile)
-    flipped = [s[::-1] for s in edges]
     for tid2, tile2 in tiles.items():
         if tid == tid2:
             continue
 
-        edges2 = find_edges(tile2)
-        for e in edges2:
-            if e in edges:
-                matching_edges[tid].add(tid2)
-            elif e in flipped:
-                matching_edges[tid].add(tid2)
+        if any([e in edges for e in find_edges(tile2)]):
+            matching_edges[tid].add(tid2)
 
 answer1 = 1
 corners = []
@@ -69,27 +64,18 @@ for tid, matches in matching_edges.items():
 print(answer1)
 
 
-def printt(tile):
-    for row in tile:
-        print(row)
-    print("")
-
-
 def match_lr(r, tile):
-    tile = copy(tile)
     for i in range(4):
-        # print(r, tile)
         if "".join([x[0] for x in tile]) == r:
             return tile
-        tile = rotate_r(tile)
+        tile = rotate(tile)
 
 
 def match_bt(b, tile):
-    tile = copy(tile)
     for i in range(4):
         if tile[0] == b:
             return tile
-        tile = rotate_r(tile)
+        tile = rotate(tile)
 
 
 def fit_right(last_tile, matches):
@@ -120,27 +106,12 @@ def fit(tid):
     match = fit_right(tile, matches)
     return tile, match
 
-    # tile = tiles[tid]
-    # for i in range(4):
-    #     if match := fit_right(tile, matches):
-    #         return tile, match
-    #     tile = rotate_r(tile)
-
-    # tile = flip_h(tile)
-    # for i in range(4):
-    #     if match := fit_right(tile, matches):
-    #         return tile, match
-    #     tile = rotate_r(tile)
-
 
 image = []
 last = corners[0]
 
 # input
 tiles[last] = flip_h(tiles[last])
-# test
-# tiles[last] = rotate_r(tiles[last])
-# tiles[last] = rotate_r(tiles[last])
 
 
 for y in range(size):
@@ -162,14 +133,6 @@ for y in range(size):
     last, match = bot
     tiles[last] = match
 
-# for row in image:
-#     for i in range(10):
-#         r = ""
-#         for tile in row:
-#             print(tile[i] + " ", end="")
-#         print("")
-#     print("")
-
 
 def peel(tile):
     tile = tile[1:-1]
@@ -177,8 +140,6 @@ def peel(tile):
 
 
 peeled = [list(map(peel, row)) for row in image]
-
-printt(peeled[0][0])
 
 image = []
 for row in peeled:
@@ -190,7 +151,6 @@ for row in peeled:
 
 
 linel = len(image[0]) - 20
-print(linel)
 reg = (
     r"(..................#.).{%s}(#....##....##....###).{%s}(.#..#..#..#..#..#...)"
     % (linel, linel)
@@ -206,15 +166,13 @@ def scan(image):
 found = 0
 for _ in range(4):
     found += scan(image)
-    image = rotate_r(image)
+    image = rotate(image)
 
 image = flip_v(image)
 for _ in range(4):
     found += scan(image)
-    image = rotate_r(image)
+    image = rotate(image)
 
 
-hashes = 0
-for row in image:
-    hashes += row.count("#")
+hashes = sum(row.count("#") for row in image)
 print(hashes - (15 * found))
