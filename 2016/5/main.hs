@@ -1,18 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Data.ByteString.Lazy.UTF8 (fromString)
-import Data.Digest.Pure.MD5 (md5, md5DigestBytes)
-import Data.Hash.MD5 (Str (Str), md5s)
+import qualified Crypto.Hash.MD5 as MD5
+import Data.ByteString.Base16 (encode)
+import Data.ByteString.Char8 (pack, unpack)
+import Data.Char (intToDigit)
 import Data.List (find)
 import Data.Maybe (fromJust)
-import qualified Data.Text as T (Text, pack, take, unpack)
-import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Lazy.Encoding (encodeUtf8)
+import Data.Text (Text)
+import qualified Data.Text as T
+
+hash :: String -> Text
+hash = T.pack . unpack . encode . MD5.hash . pack
+
+part2 :: [Text] -> [Char]
+part2 hashes = map ((`T.index` 6) . fromJust . findP) ['0', '1', '2', '3', '4', '5', '6', '7']
+  where
+    findP p = find ((== p) . (`T.index` 5)) hashes
 
 main :: IO ()
 main = do
-  -- let pass = take 8 [hash !! 5 | x <- [1 ..], let hash = show $ md5 $ encodeUtf8 $ "ugkcyxxp", T.take 5 hash == T.pack "00000"]
-  let pass = take 8 [hash !! 5 | x <- [1 ..], let hash = md5s . Str $ "ugkcyxxp" ++ show x, take 5 hash == "00000"]
+  let hashes = [h | x <- [1 ..], let h = hash ("ugkcyxxp" ++ show x), T.take 5 h == "00000"]
+  let pass = map (`T.index` 5) $ take 8 hashes
   print pass
-
--- print $ fromJust $ find (\x -> take 6 x == "000001") [hash | x <- [1 ..], let hash = show $ md5 $ fromString $ pre ++ show x]
+  print $ part2 hashes
