@@ -1,4 +1,4 @@
-import Data.List (group, permutations, sort)
+import Data.List (group, sort)
 import Text.Regex.Posix ((=~))
 
 type Line = ((Int, Int), (Int, Int))
@@ -9,11 +9,12 @@ parse s = ((a1, b1), (a2, b2))
     [a1, b1, a2, b2] = map read $ drop 1 $ head (s =~ "([0-9]+),([0-9]+) -> ([0-9]+),([0-9]+)" :: [[String]])
 
 path :: Line -> [(Int, Int)]
-path ((x1, y1), (x2, y2))
-  | x1 == x2 || y1 == y2 = [(x, y) | x <- range x1 x2, y <- range y1 y2]
-  | otherwise = zip (range x1 x2) (range y1 y2)
+path ((x1, y1), (x2, y2)) = zip (range x1 x2) (range y1 y2)
   where
-    range a b = if a > b then reverse [b .. a] else [a .. b]
+    range a b
+      | a == b = repeat a
+      | a > b = reverse [b .. a]
+      | otherwise = [a .. b]
 
 count :: [(Int, Int)] -> Int
 count points = length $ filter ((> 1) . length) $ group $ sort points
