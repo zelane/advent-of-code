@@ -1,13 +1,9 @@
 lines = []
 
-with open("day2.txt") as f:
+with open("input.txt") as f:
     lines = f.read().split("\n")
 
-keypad = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-]
+keypad = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
 position = (1, 1)
 
