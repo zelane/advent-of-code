@@ -1,3 +1,4 @@
+import Control.Parallel.Strategies (parMap, rpar)
 import Data.List.Split (splitOn)
 
 calcFuel :: (Num a) => (a -> a -> a) -> [a] -> a -> a
@@ -11,4 +12,4 @@ main = do
   let f2 p x = sum [0 .. abs (x - p)]
 
   print $ minimum $ map (calcFuel f vals) [0 .. 500]
-  print $ minimum $ map (calcFuel f2 vals) [0 .. 500]
+  print $ minimum $ parMap rpar (calcFuel f2 vals) [0 .. 500]
