@@ -27,18 +27,18 @@ hexToBin c = case c of
   'E' -> "1110"
   'F' -> "1111"
 
-data Packet = OP Int Int [Packet] | Lit Int Int Int
+data Packet = OP Int Int [Packet] | Lit Int Int Int deriving (Show)
 
 readBin :: String -> Int
 readBin = foldl' (\acc x -> acc * 2 + digitToInt x) 0
 
-parseA :: Parsec String () [[[Int]]]
+parseA :: Parsec String () [Packet]
 parseA = do
   re <- many (choice [try lit, try op1, try op2])
   many anyChar
   return re
 
-op1 :: Parsec String () [[Int]]
+op1 :: Parsec String () Packet
 op1 = do
   -- parserTrace "op1"
   ver <- count 3 anyChar
@@ -46,10 +46,10 @@ op1 = do
   l <- char '0'
   spLen <- readBin <$> count 15 anyChar
   sps <- count spLen anyChar
-  let subPackets = concat $ fromRight' $ parse parseA "" sps
-  return $ [readBin id, readBin ver, length subPackets] : subPackets
+  let subPackets = fromRight' $ parse parseA "" sps
+  return $ OP (readBin id) (readBin ver) subPackets
 
-op2 :: Parsec String () [[Int]]
+op2 :: Parsec String () Packet
 op2 = do
   -- parserTrace "op2"
   ver <- count 3 anyChar
@@ -57,9 +57,9 @@ op2 = do
   l <- char '1'
   spLen <- readBin <$> count 11 anyChar
   subPackets <- count spLen $ choice [try lit, try op1, try op2]
-  return $ [readBin id, readBin ver, traceShow (id, ver, subPackets) length $ concat subPackets] : concat subPackets
+  return $ OP (readBin id) (readBin ver) subPackets
 
-lit :: Parsec String () [[Int]]
+lit :: Parsec String () Packet
 lit = do
   -- parserTrace "lit"
   ver <- count 3 anyChar
@@ -67,7 +67,7 @@ lit = do
   ones <- many $ char '1' >> count 4 anyChar
   last <- char '0' >> count 4 anyChar
   let v = concat $ ones ++ [last]
-  return [[readBin id, readBin ver, readBin v]]
+  return $ Lit (readBin id) (readBin ver) (readBin v)
 
 -- calc :: [[Int]] -> Int
 -- calc (i : is) = case i !! 1 of
@@ -81,4 +81,5 @@ main = do
   let bins = concatMap hexToBin input
   let o = parse parseA "" bins
   print o
-  print $ sum $ map (!! 1) $ head $ fromRight' o
+
+-- print $ sum $ map (!! 1)  $ fromRight' o
