@@ -1,5 +1,5 @@
 import Data.Char (isLower)
-import Data.List (delete, nub, singleton, union, (\\))
+import Data.List (delete, nub, union, (\\))
 import Data.List.Split (splitOn)
 import qualified Data.Map as M
 
