@@ -1,0 +1,57 @@
+cabal-version:      3.6
+name:               aoc2022
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             Matt M
+maintainer:         zelane@hollow.tech
+
+-- A copyright notice.
+-- copyright:
+-- category:
+-- extra-source-files: CHANGELOG.md
+
+
+executable aoc2022
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:
+        Lib
+        Day1
+        Day2
+        Day3
+        Day4
+        Day5
+        Day6
+        Day7
+        Day8
+
+    -- LANGUAGE extensions used by modules in this package.
+    default-extensions: 
+        ImportQualifiedPost,
+        OverloadedStrings,
+        OverloadedLists,
+        FlexibleContexts
+    build-depends:    
+        base ^>=4.16.3.0,
+        vector >= 0.12.0.2,
+        containers >= 0.6.5.1,
+        matrices >= 0.5.0,
+        split >= 0.2.3.5,
+        regex-base >= 0.94.0.2,
+        regex-tdfa >= 1.3.2,
+        lens >= 5.2
+
+    hs-source-dirs:   src
+    default-language: Haskell2010
