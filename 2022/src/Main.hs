@@ -1,6 +1,8 @@
 module Main where
 
 import Day1 (solve)
+import Day10 (solve)
+import Day11 (solve)
 import Day2 (solve)
 import Day3 (solve)
 import Day4 (solve)
@@ -8,6 +10,7 @@ import Day5 (solve)
 import Day6 (solve)
 import Day7 (solve)
 import Day8 (solve)
+import Day9 (solve)
 import System.Environment (getArgs)
 
 solveDay :: String -> IO ()
@@ -19,6 +22,9 @@ solveDay "5" = Day5.solve $ readFile "input/5.txt"
 solveDay "6" = Day6.solve $ readFile "input/6.txt"
 solveDay "7" = Day7.solve $ readFile "input/7.txt"
 solveDay "8" = Day8.solve $ readFile "input/8.txt"
+solveDay "9" = Day9.solve $ readFile "input/9.txt"
+solveDay "10" = Day10.solve $ readFile "input/10.txt"
+solveDay "11" = Day11.solve $ readFile "input/11t.txt"
 
 main :: IO ()
 main = do
