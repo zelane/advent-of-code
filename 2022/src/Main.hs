@@ -3,6 +3,9 @@ module Main where
 import Day1 (solve)
 import Day10 (solve)
 import Day11 (solve)
+import Day12 (solve)
+import Day13 (solve)
+import Day14 (solve)
 import Day2 (solve)
 import Day3 (solve)
 import Day4 (solve)
@@ -24,7 +27,10 @@ solveDay "7" = Day7.solve $ readFile "input/7.txt"
 solveDay "8" = Day8.solve $ readFile "input/8.txt"
 solveDay "9" = Day9.solve $ readFile "input/9.txt"
 solveDay "10" = Day10.solve $ readFile "input/10.txt"
-solveDay "11" = Day11.solve $ readFile "input/11t.txt"
+solveDay "11" = Day11.solve $ readFile "input/11.txt"
+solveDay "12" = Day12.solve $ readFile "input/12.txt"
+solveDay "13" = Day13.solve $ readFile "input/13.txt"
+solveDay "14" = Day14.solve $ readFile "input/14.txt"
 
 main :: IO ()
 main = do
