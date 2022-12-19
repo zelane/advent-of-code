@@ -19,4 +19,7 @@ zipPair f (a, b) (c, d) = (f a c, f b d)
 parseInts :: String -> [Int]
 parseInts s = if null matches then [] else read <$> matches
   where
-    matches = getAllTextMatches (s =~ ("([0-9]+)" :: String))
+    matches = getAllTextMatches (s =~ ("(-?[0-9]+)" :: String))
+
+taxi :: Num a => (a, a) -> (a, a) -> a
+taxi (x1, y1) (x2, y2) = abs (y2 - y1) + abs (x2 - x1)

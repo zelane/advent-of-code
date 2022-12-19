@@ -25,10 +25,12 @@ parseLine s = fromRight [] $ parse (sepBy xy (string " -> ")) "" s
 
 stepSand :: Walls -> Point -> Point
 stepSand walls (x, y)
-  | not $ S.member (x, y + 1) walls = (x, y + 1)
-  | not $ S.member (x - 1, y + 1) walls = (x - 1, y + 1)
-  | not $ S.member (x + 1, y + 1) walls = (x + 1, y + 1)
+  | isEmpty (x, y + 1) = (x, y + 1)
+  | isEmpty (x - 1, y + 1) = (x - 1, y + 1)
+  | isEmpty (x + 1, y + 1) = (x + 1, y + 1)
   | otherwise = (x, y)
+  where
+    isEmpty p = not $ S.member p walls
 
 run :: (Point -> Bool) -> Int -> Point -> Walls -> Walls
 run end maxy sand walls = if end nextSand then newWalls else run end maxy newSand newWalls
