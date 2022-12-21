@@ -1,16 +1,16 @@
 module Day17 where
 
 import Data.Foldable (maximumBy, minimumBy)
+import Data.HashSet qualified as S
 import Data.List (elemIndex, scanl')
 import Data.Ord (comparing)
-import Data.Set qualified as S
 import Debug.Trace (traceShow)
 
 type Point = (Int, Int)
 
 type Shape = [Point]
 
-type Walls = S.Set Point
+type Walls = S.HashSet Point
 
 data State = State
   { idx :: Int,
@@ -27,9 +27,6 @@ data Bound = Bound
     left :: Int
   }
   deriving (Show)
-
-jets :: String
-jets = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"
 
 lineH :: Shape
 lineH = [(0, 0), (1, 0), (2, 0), (3, 0)]
@@ -73,6 +70,14 @@ bounds s = Bound miny maxx maxy minx
     (_, miny) = minimumBy (comparing snd) s
     (_, maxy) = maximumBy (comparing snd) s
 
+safemax :: (Foldable t) => t Int -> Int
+safemax fo = if null fo then 0 else maximum fo
+
+pruneWalls :: Walls -> Walls
+pruneWalls walls = S.filter (\(x, y) -> y >= (minys !! x) - 10) walls
+  where
+    minys = [safemax $ S.map snd $ S.filter (\(x, y) -> x == xx) walls | xx <- [0 .. 6]]
+
 collision :: Walls -> Shape -> (Bool, Bool)
 collision walls s = (hcol, vcol || wallCol)
   where
@@ -81,11 +86,11 @@ collision walls s = (hcol, vcol || wallCol)
     vcol = bottom bound == 0
     wallCol = any (`elem` walls) s
 
-blow :: Walls -> Char -> Shape -> (Bool, Shape)
+blow :: Walls -> Char -> Shape -> Shape
 blow walls ins shape
-  | stopped = (False, shape) -- changed
-  | not oob = (False, moved)
-  | otherwise = (False, shape)
+  | stopped = shape
+  | not oob = moved
+  | otherwise = shape
   where
     trans = if ins == '>' then (1, 0) else (-1, 0)
     moved = applyT trans <$> shape
@@ -93,16 +98,14 @@ blow walls ins shape
 
 step :: State -> Char -> State
 step state ins
-  | stop1 = nextShape state {walls = newWallsBlow, stopped = stopped state + 1}
-  | stop2 = nextShape state {walls = newWallsDrop, stopped = stopped state + 1}
-  | otherwise = state {shape = dropp}
+  | stop = nextShape state {walls = S.singleton (0, 0), stopped = stopped state + 1}
+  | otherwise = state {shape = dropped}
   where
     shape' = shape state
-    (stop1, newShape) = blow (walls state) ins shape'
-    dropp = applyT (0, -1) <$> newShape
-    (_, stop2) = collision (walls state) dropp
-    newWallsBlow = S.union (walls state) $ S.fromList shape' -- convert shape positions to walls
-    newWallsDrop = S.union (walls state) $ S.fromList newShape -- convert shape positions to walls
+    newShape = blow (walls state) ins shape'
+    dropped = applyT (0, -1) <$> newShape
+    (_, stop) = collision (walls state) dropped
+    newWalls = pruneWalls $ S.union (walls state) $ S.fromList newShape -- convert shape positions to walls
 
 draw :: State -> [String]
 draw s = [[sprite (x, y) | x <- [0 .. 6]] | y <- reverse [0 .. maxy + 7]]
@@ -122,9 +125,11 @@ solve file = do
   let steps = scanl' step start (cycle input)
   -- mapM_ print $ concat $ draw <$> (take 2 $ drop 2022 steps)
   print $ maximum $ S.map snd $ walls $ (head $ dropWhile (\s -> stopped s < 2022) steps)
+
   print $ maximum $ S.map snd $ walls $ (head $ dropWhile (\s -> stopped s < 1000000000000) steps)
 
 -- mapM_ print $ draw (head $ dropWhile (\s -> stopped s < 10) steps)
 
+-- 1000000000000
 -- Don't have to save full shapes, just the max y value for each x
 -- Or loop for a pattern? Does the pattern cycle match with new shapes?
