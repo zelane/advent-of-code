@@ -24,7 +24,7 @@ maintainer:         zelane@hollow.tech
 
 executable aoc2023
     main-is:          Main.hs
-
+    hs-source-dirs:      src
     -- Modules included in this executable, other than Main.
     other-modules:
         Day1,
@@ -32,7 +32,10 @@ executable aoc2023
         Day3,
         Day4,
         Day5,
-        Day6
+        Day6,
+        Day7,
+        Day8,
+        Day9
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions: 
