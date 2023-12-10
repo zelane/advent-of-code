@@ -9,9 +9,9 @@ type Point = (Int, Int)
 parse :: [String] -> Pipes
 parse lines = concat [[((x, y), c) | (x, c) <- zip [0 ..] line] | (y, line) <- zip [0 ..] lines]
 
-findPaths :: Pipes -> [Point] -> [[Point]]
+findPaths :: Pipes -> [Point] -> [Point]
 findPaths pipes path
-  | null nextPoints = [path]
+  | null nextPoints = path
   | otherwise = concatMap (findPaths pipes) newPaths
   where
     nextPoints = move pipes path
@@ -25,7 +25,7 @@ move pipes ((x, y) : ps) = [p | (mx, my) <- moves c, let p = (x + mx, y + my), p
 
 moves :: Char -> [Point]
 moves a = case a of
-  'S' -> [(0, 1), (1, 0)]
+  'S' -> [(0, 1)]
   'F' -> [(1, 0), (0, 1)]
   '7' -> [(-1, 0), (0, 1)]
   'J' -> [(0, -1), (-1, 0)]
@@ -46,8 +46,7 @@ solve file = do
   input <- lines <$> file
   let pipes = parse input
   let start = fst $ head $ filter ((== 'S') . snd) pipes
-  let [a, b] = findPaths pipes [start]
+  let a = findPaths pipes [start]
   print $ length a `div` 2
-  print $ findMid a b + 1
   let area = shoelace a
   print $ area - abs (length a `div` 2) + 1
