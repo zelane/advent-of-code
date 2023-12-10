@@ -1,6 +1,7 @@
 module Main where
 
 import Day1 (solve)
+import Day10 (solve)
 import Day2 (solve)
 import Day3 (solve)
 import Day4 (solve)
@@ -21,6 +22,7 @@ solveDay "6" = Day6.solve $ readFile "input/6.txt"
 solveDay "7" = Day7.solve $ readFile "input/7.txt"
 solveDay "8" = Day8.solve $ readFile "input/8.txt"
 solveDay "9" = Day9.solve $ readFile "input/9.txt"
+solveDay "10" = Day10.solve $ readFile "input/10.txt"
 
 main :: IO ()
 main = do

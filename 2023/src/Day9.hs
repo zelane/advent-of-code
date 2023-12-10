@@ -1,7 +1,7 @@
 module Day9 where
 
 diff :: [Int] -> [Int]
-diff xs = zipWith (-) (tail xs) xs
+diff = zipWith (-) <$> tail <*> id
 
 diffs :: [Int] -> [[Int]]
 diffs = takeWhile (any (/= 0)) . iterate diff
