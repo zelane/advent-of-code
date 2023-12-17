@@ -15,9 +15,7 @@ sort' s = intercalate "#" $ sortBy sort'' <$> splitOn "#" s
     sort'' _ _ = EQ
 
 calcLoad :: [String] -> Int
-calcLoad xs = foldl' (\a (i, x) -> a + calc i x) 0 $ zip [length xs, length xs - 1 ..] xs
-  where
-    calc i x = i * length (filter (== 'O') x)
+calcLoad xs = sum [i * length (filter (== 'O') x) | (i, x) <- zip [1 ..] (reverse xs)]
 
 cycleLength :: (Eq a) => [a] -> (Int, Int)
 cycleLength (x : xs) = loop 1 1 x xs

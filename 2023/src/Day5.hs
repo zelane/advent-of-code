@@ -15,7 +15,7 @@ type Almanac = [Group]
 parse :: String -> (Seeds, Almanac)
 parse str = (seeds, parseGroup . lines <$> groups)
   where
-    seeds = read <$> tail (words seed) :: [Int]
+    seeds = read <$> tail (words seed)
     (seed : groups) = splitOn "\n\n" str
 
 parseGroup :: [String] -> Group
@@ -24,7 +24,7 @@ parseGroup (_ : xs) = parseRange <$> xs
 parseRange :: String -> Range
 parseRange str = ((src, src + rng - 1), dst - src)
   where
-    [dst, src, rng] = read <$> words str :: [Int]
+    [dst, src, rng] = read <$> words str
 
 applyGroup :: Group -> (Int, (Int, Int)) -> (Int, (Int, Int))
 applyGroup group (seed, (maxSeed, diff))

@@ -6,7 +6,6 @@ expand :: Int -> [String] -> [String]
 expand _ [] = []
 expand f ls = foldl (\a x -> a <> xx x) [] ls
   where
-    xx :: String -> [String]
     xx l = if all (== '.') l then replicate f l else [l]
 
 expand' :: Int -> [String] -> [String]

@@ -1,10 +1,8 @@
 module Day12 where
 
-import Data.Foldable (foldl')
 import Data.HashTable.IO qualified as H
 import Data.List (intercalate)
 import Data.List.Split (splitOn)
-import Data.Maybe (isJust)
 
 type Memo = H.BasicHashTable (Char, String, [Int]) Int
 
@@ -12,11 +10,10 @@ parse :: Memo -> Char -> String -> [Int] -> IO Int
 parse memo p s nums
   | null s && not (null nums) = return 0 -- too many nums
   | null nums && elem '#' s = return 0 -- need more nums
-  | null nums && all (== '.') s = return 1 -- string ends in dots
+  | null nums = return 1
   --
   | a == '.' = parse' memo '.' xs nums
-  | a == '?' && p == '#' = parse' memo p ('.' : xs) nums
-  | a == '?' = (+) <$> parse' memo '.' ('#' : xs) nums <*> parse' memo p ('.' : xs) nums
+  | a == '?' = (+) <$> parse' memo p ('#' : xs) nums <*> parse' memo p ('.' : xs) nums
   --
   | a == '#' && p == '#' = return 0
   | a == '#' && lenNextD < n = return 0 -- length until next . too short

@@ -46,5 +46,3 @@ solve file = do
   print $ length path `div` 2
   let area = shoelace path
   print $ area - abs (length path `div` 2) + 1
-
--- print $ takeWhile (\x -> length x == length (nub x)) itr

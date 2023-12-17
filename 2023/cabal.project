@@ -1,0 +1,4 @@
+constraints: hashtables +sse42
+allow-newer: base
+
+packages: aoc2023.cabal
