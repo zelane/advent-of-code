@@ -29,20 +29,18 @@ trace g sPos sDir = do
           H.insert cache (dir, pos) True
           let char = fromMaybe '!' $ M.lookup pos g
           let next (mx, my) = S.insert pos <$> go cache (x + mx, y + my) (mx, my)
-          case char of
-            '!' -> return []
-            '.' -> next dir
-            '/' -> next $ rotateR dir
-            '\\' -> next $ swap dir
-            '|' | dir == (0, -1) || dir == (0, 1) -> next dir
-            '-' | dir == (-1, 0) || dir == (1, 0) -> next dir
-            '|' | dir == (-1, 0) || dir == (1, 0) -> next (0, -1) <> next (0, 1)
-            '-' | dir == (0, -1) || dir == (0, 1) -> next (-1, 0) <> next (1, 0)
+          case (char, dir) of
+            ('!', _) -> return []
+            ('/', _) -> next $ rotateR dir
+            ('\\', _) -> next $ swap dir
+            ('|', (_, 0)) -> next (0, -1) <> next (0, 1)
+            ('-', (0, _)) -> next (-1, 0) <> next (1, 0)
+            _ -> next dir
 
 solve :: IO String -> IO ()
 solve file = do
   input <- lines <$> file
-  let map_ = M.fromList $ concat [[((x, y), c) | (x, c) <- zip [0 ..] line] | (y, line) <- zip [0 ..] input]
+  let grid = M.fromList $ concat [[((x, y), c) | (x, c) <- zip [0 ..] line] | (y, line) <- zip [0 ..] input]
 
   let maxX = length (head input) - 1
   let maxY = length input - 1
@@ -53,5 +51,5 @@ solve file = do
           <> [((0, y), (1, 0)) | y <- [0 .. maxY]]
           <> [((maxX, y), (-1, 0)) | y <- [0 .. maxY]]
 
-  print =<< trace map_ (0, 0) (1, 0)
-  print . maximum =<< mapM (uncurry (trace map_)) edges
+  print =<< trace grid (0, 0) (1, 0)
+  print . maximum =<< mapM (uncurry (trace grid)) edges

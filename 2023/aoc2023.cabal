@@ -43,7 +43,8 @@ executable aoc2023
         Day13,
         Day14,
         Day15,
-        Day16
+        Day16,
+        Day17
 
     -- LANGUAGE extensions used by modules in this package.
     default-extensions: 
@@ -70,7 +71,8 @@ executable aoc2023
         array,
         matrix,
         hashtables,
-        strict
+        strict,
+        parallel,
 
 
     hs-source-dirs:   src
