@@ -1,11 +1,12 @@
 module Day17 where
 
-import Algorithm.Search (dijkstraAssoc)
 import Data.Char (digitToInt)
-import Data.HashMap.Strict qualified as M
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Map.Strict qualified as M
+import Data.Maybe (fromMaybe)
+import Data.PQueue.Prio.Min qualified as PQ
+import Data.Set qualified as S
 
-type Grid = M.HashMap (Int, Int) Int
+type Grid = M.Map (Int, Int) Int
 
 type Point = (Int, Int)
 
@@ -30,13 +31,22 @@ isEnd :: Limits -> Point -> Step -> Bool
 isEnd (dMin, _) end (p, _, _, dc) = p == end && dc >= dMin
 
 search :: Limits -> Point -> Grid -> Int
-search limits end g = fst $ fromJust $ dijkstraAssoc (getNext limits g) (isEnd limits end) ((0, 0), (0, 0), (0, 0), 0)
+search limits end g = go S.empty (PQ.singleton 0 ((0, 0), (0, 0), (0, 0), 0))
+  where
+    go :: S.Set Step -> PQ.MinPQueue Int Step -> Int
+    go seen pq
+      | isEnd limits end step = score
+      | S.notMember step seen = go (S.insert step seen) (foldr (\(n, s) q -> PQ.insert (score + s) n q) npq next)
+      | otherwise = go seen npq
+      where
+        ((score, step), npq) = PQ.deleteFindMin pq
+        next = getNext limits g step
 
 solve :: IO String -> IO ()
 solve file = do
   input <- lines <$> file
   let grid = M.fromList $ concat [[((x, y), digitToInt c) | (x, c) <- zip [0 ..] line] | (y, line) <- zip [0 ..] input]
-  let end = maximum $ M.keys grid
+  let (end, _) = M.findMax grid
 
   print $ search (0, 3) end grid
   print $ search (4, 10) end grid

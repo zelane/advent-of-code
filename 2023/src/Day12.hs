@@ -3,6 +3,7 @@ module Day12 where
 import Data.HashTable.IO qualified as H
 import Data.List (intercalate)
 import Data.List.Split (splitOn)
+import Data.Text qualified as T
 
 type Memo = H.BasicHashTable (Char, String, [Int]) Int
 
@@ -43,8 +44,5 @@ solve file = do
   let unfolded = [(intercalate "?" (replicate 5 s), concat $ replicate 5 c) | (s, c) <- springs]
 
   memo <- H.new
-  part1 <- mapM (uncurry (parse' memo '.')) springs
-  print $ sum part1
-
-  part2 <- mapM (uncurry (parse' memo '.')) unfolded
-  print $ sum part2
+  print . sum =<< mapM (uncurry (parse' memo '.')) springs
+  print . sum =<< mapM (uncurry (parse' memo '.')) unfolded
