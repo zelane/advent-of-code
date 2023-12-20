@@ -10,7 +10,9 @@ import Day15 (solve)
 import Day16 (solve)
 import Day17 (solve)
 import Day18 (solve)
+import Day19 (solve)
 import Day2 (solve)
+import Day20 (solve)
 import Day3 (solve)
 import Day4 (solve)
 import Day5 (solve)
@@ -39,6 +41,8 @@ solveDay "15" = Day15.solve $ readFile "input/15.txt"
 solveDay "16" = Day16.solve $ readFile "input/16.txt"
 solveDay "17" = Day17.solve $ readFile "input/17.txt"
 solveDay "18" = Day18.solve $ readFile "input/18.txt"
+solveDay "19" = Day19.solve $ readFile "input/19.txt"
+solveDay "20" = Day20.solve $ readFile "input/20t.txt"
 
 main :: IO ()
 main = do
