@@ -20,8 +20,7 @@ getNext (dMin, dMax) g (p@(x, y), prevP, prevD, dc) = adj
     adj = [((next, p, dir, newDc dir), cost next) | dir@(mx, my) <- dirs', let next = (x + mx, y + my), cost next > 0, next /= prevP]
     dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     dirs'
-      | p == (0, 0) = [(0, 1), (1, 0)]
-      | dc < dMin = [prevD]
+      | dc > 0 && dc < dMin = [prevD]
       | dc == dMax = filter (/= prevD) dirs
       | otherwise = dirs
     cost x = fromMaybe 0 (M.lookup x g)
