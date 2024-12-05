@@ -1,0 +1,81 @@
+cabal-version:      3.6
+name:               aoc2024
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             Matt M
+maintainer:         zelane@hollow.tech
+
+-- A copyright notice.
+-- copyright:
+-- category:
+-- extra-source-files: CHANGELOG.md
+
+
+executable aoc2023
+    main-is:          Main.hs
+    hs-source-dirs:      src
+    ghc-options: -threaded -rtsopts
+    -- Modules included in this executable, other than Main.
+    other-modules:
+        Day1,
+        Day2,
+        Day3,
+        Day4,
+        Day5,
+        Day6,
+        Day7,
+        Day8,
+        Day9,
+        Day10,
+        Day11,
+        Day12,
+        Day13,
+        Day14,
+        Day15,
+        Day16,
+        Day17,
+        Day18
+
+    -- LANGUAGE extensions used by modules in this package.
+    default-extensions: 
+        ImportQualifiedPost,
+        OverloadedStrings,
+        OverloadedLists,
+        FlexibleContexts
+    build-depends:    
+        base ^>=4.17.2.0,
+        vector >= 0.12.0.2,
+        containers >= 0.6.5.1,
+        split >= 0.2.3.5,
+        regex-base >= 0.94.0.2,
+        regex-tdfa >= 1.3.2,
+        regex-pcre-builtin >= 0.95.2.3.8.44,
+        lens >= 5.2,
+        mtl >= 2.3.1,
+        search-algorithms >= 0.3.2,
+        parsec >= 3.1.15.1,
+        unordered-containers >= 0.2.19.1,
+        pqueue >= 1.4.3.0,
+        memoize >= 1.1.2,
+        text,
+        array,
+        matrix,
+        hashtables,
+        strict,
+        parallel,
+        heaps
+
+
+    hs-source-dirs:   src
+    default-language: Haskell2010
