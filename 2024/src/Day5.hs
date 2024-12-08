@@ -2,11 +2,10 @@ module Day5 where
 
 import Data.List (elemIndex, intersect, sortBy, (\\))
 import Data.List.Split (splitOn)
-import Data.Maybe (isJust)
 
 psort :: [String] -> String -> String -> Ordering
 psort rules a b
-  | isJust $ elemIndex (b ++ "|" ++ a) rules = GT
+  | (b ++ "|" ++ a) `elem` rules = GT
   | otherwise = EQ
 
 mid :: [String] -> Int
