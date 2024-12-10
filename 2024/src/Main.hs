@@ -20,28 +20,35 @@ import Day8 (solve)
 import Day9 (solve)
 import System.Environment (getArgs)
 
-solveDay :: String -> IO ()
-solveDay "1" = Day1.solve $ readFile "input/1.txt"
-solveDay "2" = Day2.solve $ readFile "input/2.txt"
-solveDay "3" = Day3.solve $ readFile "input/3.txt"
-solveDay "4" = Day4.solve $ readFile "input/4.txt"
-solveDay "5" = Day5.solve $ readFile "input/5.txt"
-solveDay "6" = Day6.solve $ readFile "input/6.txt"
-solveDay "7" = Day7.solve $ readFile "input/7.txt"
-solveDay "8" = Day8.solve $ readFile "input/8.txt"
-solveDay "9" = Day9.solve $ readFile "input/9.txt"
-solveDay "10" = Day10.solve $ readFile "input/10.txt"
-solveDay "11" = Day11.solve $ readFile "input/11.txt"
-solveDay "12" = Day12.solve $ readFile "input/12.txt"
-solveDay "13" = Day13.solve $ readFile "input/13.txt"
-solveDay "14" = Day14.solve $ readFile "input/14.txt"
-solveDay "15" = Day15.solve $ readFile "input/15.txt"
-solveDay "16" = Day16.solve $ readFile "input/16.txt"
-solveDay "17" = Day17.solve $ readFile "input/17.txt"
-solveDay "18" = Day18.solve $ readFile "input/18.txt"
+solveDay :: String -> Bool -> IO ()
+solveDay day test = do
+  let input = readFile $ "input/" ++ day ++ if test then "t.txt" else ".txt"
+  solvers !! (read day - 1) $ input
+  where
+    solvers =
+      [ Day1.solve,
+        Day2.solve,
+        Day3.solve,
+        Day4.solve,
+        Day5.solve,
+        Day6.solve,
+        Day7.solve,
+        Day8.solve,
+        Day9.solve,
+        Day10.solve,
+        Day11.solve,
+        Day12.solve,
+        Day13.solve,
+        Day14.solve,
+        Day15.solve,
+        Day16.solve,
+        Day17.solve,
+        Day18.solve
+      ]
 
 main :: IO ()
 main = do
   args <- getArgs
   let day = head args
-  solveDay day
+  let test = length args > 1
+  solveDay day test
